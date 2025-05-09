@@ -385,27 +385,21 @@
 
         // Simple authentication system
         // In a real app, you would connect this to a proper backend
-        const validUsers = {
-            'customer1': 'password1',
-            'customer2': 'password2',
-            'admin': 'adminpass'
-        };
+        // Add this to your HTML head
+<script type="text/javascript" src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 
-        document.getElementById('login-button').addEventListener('click', function() {
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            
-            if (validUsers[username] && validUsers[username] === password) {
-                // Successful login
-                document.getElementById('login-overlay').style.display = 'none';
-                setupWatermark(username);
-                loadPdf();
-                setupAntiScreenshot();
-            } else {
-                // Failed login
-                document.getElementById('login-error').textContent = 'Invalid username or password';
-            }
-        });
+// Replace the login button event with this:
+document.getElementById('login-button').addEventListener('click', function() {
+    netlifyIdentity.open();
+});
+
+// Add this to detect successful login
+netlifyIdentity.on('login', user => {
+    document.getElementById('login-overlay').style.display = 'none';
+    setupWatermark(user.user_metadata.full_name || user.email);
+    loadPdf();
+    setupAntiScreenshot();
+});
 
         // Function to load the PDF
         function loadPdf() {
